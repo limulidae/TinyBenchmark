@@ -22,7 +22,7 @@ for ($i = 0; $i -lt 100; $i++) {
 
     Get-Process "tinybenchmark" -ErrorAction SilentlyContinue | Stop-Process -ErrorAction SilentlyContinue
 
-    & xperf -on SysProf+IDLE_STATS+POWER+CSWITCH+DISPATCHER
+    & xperf -on SysProf+IDLE_STATES+POWER+CSWITCH+DISPATCHER
     & xperf -start tiny -on Microsoft-Windows-Kernel-Pep+Microsoft-Windows-Kernel-Processor-Power:0xC2:4 -f $user_fn
 
     & ..\tinybenchmark.exe
