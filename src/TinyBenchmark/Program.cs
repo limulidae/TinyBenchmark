@@ -7,9 +7,9 @@ namespace TinyBenchmark
     class Options
     {
         [Option('g', "group", Required = false, HelpText = "set the group number.")]
-        public int Group { get; set; } = 2;
+        public int Group { get; set; } = 5;
 
-        [Option('r', "random", Required = false, HelpText = "Randomize counter.")]
+        [Option('r', "random", Required = false, HelpText = "Randomize Counter.")]
         public bool IsRandomCounter { get; set; } = false;
     }
 
@@ -31,7 +31,7 @@ namespace TinyBenchmark
                 File.AppendAllText(fileName, $"{Process.GetCurrentProcess().Id}, {GetCurrentThreadId()}, {Thread.CurrentThread.ManagedThreadId}. {grp}, {id}\n");
             }
 
-            var denominator = 2;
+            var denominator = 1;
             if (randomCounter)
             {
                 denominator = (new Random()).Next(2, 6);
