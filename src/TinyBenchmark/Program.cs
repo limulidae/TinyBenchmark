@@ -77,6 +77,8 @@ namespace TinyBenchmark
 
         static void Main(string[] args)
         {
+            Process.GetCurrentProcess().ProcessorAffinity = (nint)0x2;
+
             Parser.Default.ParseArguments<Options>(args)
                 .WithParsed<Options>(opts => RunWithOptions(opts))
                 .WithNotParsed<Options>(errs => HandleParseError(errs));
