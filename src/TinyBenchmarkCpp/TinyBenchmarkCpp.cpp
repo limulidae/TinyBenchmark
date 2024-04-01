@@ -2,16 +2,39 @@
 //
 
 #include <format>
+#include <fstream>
 #include <iostream>
-#include <thread>
+#include <mutex>
+#include <sstream>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include <windows.h>
 
-void threadFunction(int id, int counter, int Interation)
+std::mutex fileLock;
+void writeToCsv(const std::string& fileName, const std::string& data) {
+	std::lock_guard<std::mutex> lock(fileLock);
+	std::ofstream file(fileName, std::ios::app);
+	if (file.is_open()) {
+		file << data << std::endl;
+		file.close();
+	}
+	else {
+		std::cerr << "open file failed." << std::endl;
+	}
+}
+
+void threadFunction(int group, int sn, int counter, int Interation)
 {
-	std::cout << std::format("{},", id);
+	std::string fileName = std::format("threads_{}.csv", GetCurrentProcessId());
+	std::thread::id threadId = std::this_thread::get_id();
+	std::ostringstream oss;
+	oss << threadId;
+	std::string threadIdStr = oss.str();
+	writeToCsv(fileName, std::format("{}, {}, {}, {}", GetCurrentProcessId(), threadIdStr, group, sn));
+
+	std::cout << std::format("{},", sn);
 	for (int i = 0; i < Interation; i++)
 	{
 		int c = counter;
@@ -35,16 +58,19 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
+	std::string fileName = std::format("threads_{}.csv", GetCurrentProcessId());
+	writeToCsv(fileName, "Process ID, Thread ID, Group, Serial Number");
+
 	for (int g = 0; g < Group; g++)
 	{
 		int thd_cound = 1 << g;
 		std::vector<std::thread> threads;
 
 		// create all threads
-		for (int id = 1; id <= thd_cound; id++)
+		for (int sn = 1; sn <= thd_cound; sn++)
 		{
 			// create a new thread
-			std::thread t(threadFunction, id, Counter, Interation);
+			std::thread t(threadFunction, g, sn, Counter, Interation);
 			threads.push_back(std::move(t));
 		}
 
