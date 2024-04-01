@@ -20,11 +20,20 @@ void threadFunction(int id, int counter, int Interation)
 	}
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
 	int Group = std::stoi(argv[1]);
 	int Counter = INT_MAX / 2;
 	int Interation = std::stoi(argv[2]);
+	int Affinity = std::stoi(argv[3]);
+
+	HANDLE hProcess = GetCurrentProcess();
+	DWORD_PTR processAffinityMask = Affinity;
+
+	if (!SetProcessAffinityMask(hProcess, processAffinityMask)) {
+		std::cerr << "SetProcessAffinityMask failed." << std::endl;
+		return 1;
+	}
 
 	for (int g = 0; g < Group; g++)
 	{
